@@ -68,7 +68,7 @@ class App extends Component {
     return this.state.videos.map( (video, i) =>  (
       <li key={i} onClick={this.goTo.bind(this, i)} className={this.state.activeIndex === i ? 'active' : ''}>
         <img src={video.data.thumbnail} />
-        <p>{`${video.data.title.substring(0, 90)}${video.data.title.length > 90 ? '...' : '' }`}</p>
+        <p>{`${video.data.title.substring(0, 100)}${video.data.title.length > 100 ? '...' : '' }`}</p>
       </li>
     ));
   };
