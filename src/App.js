@@ -64,15 +64,23 @@ class App extends Component {
     return '';
   };
 
+  renderThumbnails = () => {
+    return this.state.videos.map( (video, i) =>  (
+      <li key={i} onClick={this.goTo.bind(this, i)} className={this.state.activeIndex === i ? 'active' : ''}>
+        <img src={video.data.thumbnail} />
+        <p>{`${video.data.title.substring(0, 90)}${video.data.title.length > 90 ? '...' : '' }`}</p>
+      </li>
+    ));
+  };
+
+  componentDidUpdate(prevProps, prevState) {
+    if(prevState.activeIndex !== this.state.activeIndex) {
+      this.list.children[this.state.activeIndex].scrollIntoView();
+    }
+  }
+
   render() {
-    const thumbnails = this.state.videos.map( (video, i) => {
-      return (
-        <li key={i} onClick={this.goTo.bind(this, i)} className={this.state.activeIndex === i ? 'active' : ''}>
-          <img src={video.data.thumbnail} />
-          <p>{`${video.data.title.substring(0, 90)}${video.data.title.length > 90 ? '...' : '' }`}</p>
-        </li>
-      )
-    });
+    const thumbnails = this.renderThumbnails();
     const activeVideo = this.state.videos[this.state.activeIndex];
     const title = activeVideo ? activeVideo.data.title : 'Weddit';
     const youtubeID = this.getYoutubeId(activeVideo);
@@ -81,8 +89,6 @@ class App extends Component {
         autoplay: 1
       }
     };
-    console.log(activeVideo)
-    console.log(youtubeID);
     return (
       <div className="App">
         <header className="App-header">
@@ -91,8 +97,6 @@ class App extends Component {
         <div className="wrapper">
           <div className="left">
             <div className="video-wrapper">
-              {/*<iframe allow="autoplay; encrypted-media" allowFullScreen frameBorder={0} src={src} className="video" />*/}
-              {/*<iframe allowFullScreen frameBorder={0} src={autoplay} className="video" />*/}
 
               <YouTube
                 videoId={youtubeID}
@@ -107,7 +111,7 @@ class App extends Component {
             <span className="signature">{`${this.state.activeIndex+1} out of ${this.state.videos.length} videos`}</span>
           </div>
           <div className="right">
-            <ul>
+            <ul ref={ ref => this.list = ref }>
               {thumbnails}
               <li onClick={this.loadMore}>
                 <p>Y'all got any more of them videos?</p>
